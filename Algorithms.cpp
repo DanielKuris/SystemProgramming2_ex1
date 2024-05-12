@@ -189,7 +189,7 @@ namespace ariel {
             pq.pop();
 
             for (std::vector<int>::size_type v = 0; v < V; ++v) { // Use auto for v and cast V to unsigned
-                if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
+                if (adjMatrix[u][v] != 0 && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
                     dist[v] = dist[u] + adjMatrix[u][v];
                     prev[v] = u;
                     pq.push(std::make_pair(dist[v], v));
@@ -221,6 +221,7 @@ namespace ariel {
             return ss.str();
         }
     }
+
 
 
     bool Algorithms::isConnected(const Graph& graph) {
