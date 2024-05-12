@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_set>
 #include <climits>
+#include <limits>
 
 using namespace std;
 
@@ -99,73 +100,62 @@ namespace ariel {
 
 
 
-   std::string Algorithms::shortestPath(const Graph& graph, int start, int end) {
-    int V = graph.getNumVertices();
-    vector<vector<int>> adjMatrix = graph.getGraph(); // Get the adjacency matrix
+    std::string Algorithms::shortestPath(const Graph& graph, std::vector<int>::size_type start, std::vector<int>::size_type end) {
+        auto V = static_cast<std::vector<int>::size_type>(graph.getNumVertices()); // Use auto for V
 
-    // Create a priority queue to store vertices and their distances from the start vertex
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        std::vector<std::vector<int>> adjMatrix = graph.getGraph();
+        std::priority_queue<std::pair<int, std::vector<int>::size_type>, std::vector<std::pair<int, std::vector<int>::size_type>>, std::greater<std::pair<int, std::vector<int>::size_type>>> pq;
+        std::vector<int> dist(V, INT_MAX);
+        std::vector<std::vector<int>::size_type> prev(V, std::numeric_limits<std::vector<int>::size_type>::max());
 
-    // Create a vector to store the distances from the start vertex to each vertex
-    vector<int> dist(V, INT_MAX);
+        dist[start] = 0;
 
-    // Create a vector to store the previous vertex in the shortest path
-    vector<int> prev(V, -1);
+        pq.push(std::make_pair(0, start));
 
-    // Set the distance of the start vertex to 0
-    dist[start] = 0;
+        while (!pq.empty()) {
+            std::vector<int>::size_type u = pq.top().second;
+            pq.pop();
 
-    // Insert the start vertex into the priority queue
-    pq.push(make_pair(0, start));
-
-    // Dijkstra's algorithm
-    while (!pq.empty()) {
-        int u = pq.top().second;
-        pq.pop();
-
-        // Traverse all adjacent vertices of u
-        for (int v = 0; v < V; v++) {
-            if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
-                // Update the distance and previous vertex
-                dist[v] = dist[u] + adjMatrix[u][v];
-                prev[v] = u;
-
-                // Insert the updated vertex into the priority queue
-                pq.push(make_pair(dist[v], v));
+            for (std::vector<int>::size_type v = 0; v < V; ++v) { // Use auto for v and cast V to unsigned
+                if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
+                    dist[v] = dist[u] + adjMatrix[u][v];
+                    prev[v] = u;
+                    pq.push(std::make_pair(dist[v], v));
+                }
             }
         }
-    }
 
-    // Reconstruct the shortest path string representation
-    std::stringstream ss;
-    int current = end;
-    while (current != -1) {
-        ss << current;
-        if (prev[current] != -1) {
-            ss << "->";
+        std::stringstream ss;
+        std::vector<int>::size_type current = end;
+        while (current != -1) {
+            ss << current;
+            if (prev[current] != -1) {
+                ss << "->";
+            }
+            current = prev[current];
         }
-        current = prev[current]; // Fix: Save the vertex number instead of the pair
+
+        return ss.str();
     }
 
-    return ss.str();
-}
+
 
 
     bool Algorithms::isConnected(const Graph& graph) {
-        int V = graph.getNumVertices();
+        auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
         vector<bool> visited(V, false);
 
         // Start BFS traversal from vertex 0
-        queue<int> q;
+        queue<std::vector<std::vector<int>>::size_type> q; // Change the queue type
         q.push(0);
         visited[0] = true;
 
         while (!q.empty()) {
-            int u = q.front();
+            std::vector<std::vector<int>>::size_type u = q.front(); // Change the type of u
             q.pop();
 
             // Traverse all adjacent vertices of u
-            for (int v = 0; v < V; v++) {
+            for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) { // Change the type of v
                 if (graph.isEdge(u, v) && !visited[v]) {
                     q.push(v);
                     visited[v] = true;
@@ -174,7 +164,7 @@ namespace ariel {
         }
 
         // Check if all vertices are visited
-        for (int i = 0; i < V; i++) {
+        for (std::vector<std::vector<int>>::size_type i = 0; i < V; i++) { // Change the type of i
             if (!visited[i]) {
                 return false; // Graph is not connected
             }
@@ -183,3 +173,5 @@ namespace ariel {
         return true; // Graph is connected
     }
 }
+
+
