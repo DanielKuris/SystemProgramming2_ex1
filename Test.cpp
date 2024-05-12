@@ -1,6 +1,5 @@
-#include "catch.hpp"
-#include "Graph.h"
-#include "Algorithms.h"
+#include "Graph.hpp"
+#include "Algorithms.hpp"
 #include <vector>
 #include <string>
 
