@@ -31,14 +31,18 @@ namespace ariel {
     // Method to calculate the number of edges in the graph
     int Graph::calculateNumEdges(const std::vector<std::vector<int>>& graph) {
         int edges = 0;
-        for (const auto& row : graph) {
-            for (int val : row) {
-                edges += val;
+        for (size_t i = 0; i < graph.size(); ++i) {
+            for (size_t j = 0; j < graph[i].size(); ++j) {
+                // Skip counting diagonal elements (self-loops)
+                if (i != j && graph[i][j] != 0) {
+                    edges++;
+                }
             }
         }
-        // Since each edge is counted twice in the adjacency matrix
-        return edges / 2;
+        // Assuming that if an edge exists twice its an indirected graph thus should be counted
+        return edges;
     }
+
 
     std::vector<std::vector<int>> Graph::getGraph() const {
         return graph; // Return the adjacency matrix
