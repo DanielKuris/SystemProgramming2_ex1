@@ -16,8 +16,14 @@ namespace ariel {
 
     // Method to load the graph from a vector of vectors
     void Graph::loadGraph(const std::vector<std::vector<int>>& graph) {
+        // Check if the graph is square
+        if (graph.size() != graph[0].size()) {
+            throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
+        }
+
         // Assign the graph to the member variable
         this->graph = graph;
+
         // Calculate number of vertices and edges
         numVertices = graph.size();
         numEdges = calculateNumEdges(graph);
