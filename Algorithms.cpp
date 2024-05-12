@@ -94,57 +94,57 @@ namespace ariel {
     }
 
 
-    vector<int> Algorithms::shortestPath(const Graph& graph, int start, int end) {
-        int V = graph.getNumVertices();
-        vector<vector<int>> adjMatrix = graph.getGraph(); // Get the adjacency matrix
+   std::string Algorithms::shortestPath(const Graph& graph, int start, int end) {
+    int V = graph.getNumVertices();
+    vector<vector<int>> adjMatrix = graph.getGraph(); // Get the adjacency matrix
 
-        // Create a priority queue to store vertices and their distances from the start vertex
-        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    // Create a priority queue to store vertices and their distances from the start vertex
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
 
-        // Create a vector to store the distances from the start vertex to each vertex
-        vector<int> dist(V, INT_MAX);
+    // Create a vector to store the distances from the start vertex to each vertex
+    vector<int> dist(V, INT_MAX);
 
-        // Create a vector to store the previous vertex in the shortest path
-        vector<int> prev(V, -1);
+    // Create a vector to store the previous vertex in the shortest path
+    vector<int> prev(V, -1);
 
-        // Set the distance of the start vertex to 0
-        dist[start] = 0;
+    // Set the distance of the start vertex to 0
+    dist[start] = 0;
 
-        // Insert the start vertex into the priority queue
-        pq.push(make_pair(0, start));
+    // Insert the start vertex into the priority queue
+    pq.push(make_pair(0, start));
 
-        // Dijkstra's algorithm
-        while (!pq.empty()) {
-            int u = pq.top().second;
-            pq.pop();
+    // Dijkstra's algorithm
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        pq.pop();
 
-            // Traverse all adjacent vertices of u
-            for (int v = 0; v < V; v++) {
-                if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
-                    // Update the distance and previous vertex
-                    dist[v] = dist[u] + adjMatrix[u][v];
-                    prev[v] = u;
+        // Traverse all adjacent vertices of u
+        for (int v = 0; v < V; v++) {
+            if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
+                // Update the distance and previous vertex
+                dist[v] = dist[u] + adjMatrix[u][v];
+                prev[v] = u;
 
-                    // Insert the updated vertex into the priority queue
-                    pq.push(make_pair(dist[v], v));
-                }
+                // Insert the updated vertex into the priority queue
+                pq.push(make_pair(dist[v], v));
             }
         }
-
-        // Reconstruct the shortest path
-        vector<int> path;
-        int current = end;
-
-        while (current != -1) {
-            path.push_back(current);
-            current = prev[current];
-        }
-
-        // Reverse the path to get the correct order
-        reverse(path.begin(), path.end());
-
-        return path;
     }
+
+    // Reconstruct the shortest path string representation
+    std::stringstream ss;
+    int current = end;
+    while (current != -1) {
+        ss << current;
+        if (prev[current] != -1) {
+            ss << "->";
+        }
+        current = prev[current];
+    }
+
+    return ss.str();
+}
+
 
     bool Algorithms::isConnected(const Graph& graph) {
         int V = graph.getNumVertices();
