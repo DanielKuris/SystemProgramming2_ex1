@@ -10,15 +10,22 @@ namespace ariel {
     }
 
     // Destructor
-    Graph::~Graph() {
-        // Cleanup if necessary
-    }
-
-    // Method to load the graph from a vector of vectors
     void Graph::loadGraph(const std::vector<std::vector<int>>& graph) {
+        // Check if the graph is empty
+        if (graph.empty()) {
+            throw std::invalid_argument("Invalid graph: The graph is empty.");
+        }
+
         // Check if the graph is square
         if (graph.size() != graph[0].size()) {
             throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
+        }
+
+        // Check if the graph contains non-zero diagonal elements
+        for (size_t i = 0; i < graph.size(); ++i) {
+            if (graph[i][i] != 0) {
+                throw std::invalid_argument("Invalid graph: The graph contains non-zero diagonal elements.");
+            }
         }
 
         // Assign the graph to the member variable

@@ -60,7 +60,7 @@ namespace ariel {
             for (std::vector<int>::size_type i = cyclePath.size() - 1; i < cyclePath.size(); --i) {
                 output += std::to_string(cyclePath[i]);
                 if (i > 0) {
-                    output += " -> ";
+                    output += "->";
                 }
             }
             return output;
@@ -137,7 +137,7 @@ namespace ariel {
                 for (size_t j = 0; j < path.size(); ++j) {
                     cyclePath += std::to_string(path[j]);
                     if (j < path.size() - 1) {
-                        cyclePath += " -> ";
+                        cyclePath += "->";
                     }
                 }
                 return "The graph contains a cycle: " + cyclePath;
