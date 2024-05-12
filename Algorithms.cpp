@@ -11,10 +11,14 @@
 using namespace std;
 
 namespace ariel {
-    bool Algorithms::negativeCycle(const Graph& graph) {
+    std::string Algorithms::negativeCycle(const Graph& graph) {
         auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
         std::vector<std::vector<int>> adjMatrix = graph.getGraph(); // Get the adjacency matrix
         std::vector<int> dist(V, INT_MAX);
+        std::vector<int> parent(V, -1); // Keep track of the parent of each vertex
+        std::vector<int>::size_type cycleStart = std::numeric_limits<std::vector<int>::size_type>::max(); // Initialize with maximum value
+        std::vector<int>::size_type current = std::numeric_limits<std::vector<int>::size_type>::max(); // Initialize with maximum value
+
         dist[0] = 0;
 
         // Relax edges V - 1 times
@@ -23,6 +27,7 @@ namespace ariel {
                 for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
                     if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
                         dist[v] = dist[u] + adjMatrix[u][v];
+                        parent[v] = u; // Update the parent of v
                     }
                 }
             }
@@ -32,13 +37,38 @@ namespace ariel {
         for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
             for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
                 if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
-                    return true; // Negative cycle found
+                    cycleStart = v; // Update the start of the negative cycle
+                    break;
                 }
             }
         }
 
-        return false; // No negative cycle found
+        if (cycleStart != std::numeric_limits<std::vector<int>::size_type>::max()) {
+            // Construct the negative cycle path
+            std::vector<int> cyclePath;
+            current = cycleStart;
+            while (true) {
+                cyclePath.push_back(current);
+                current = static_cast<std::vector<int>::size_type>(parent[current]);
+                if (current == cycleStart) {
+                    break;
+                }
+            }
+
+            // Convert the cycle path to a string
+            std::string output = "Negative cycle found: ";
+            for (std::vector<int>::size_type i = cyclePath.size() - 1; i < cyclePath.size(); --i) {
+                output += std::to_string(cyclePath[i]);
+                if (i > 0) {
+                    output += " -> ";
+                }
+            }
+            return output;
+        } else {
+            return "No negative cycle found";
+        }
     }
+
 
 
     std::string Algorithms::isBipartite(const Graph& graph) {

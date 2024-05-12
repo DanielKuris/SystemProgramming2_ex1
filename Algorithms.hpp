@@ -8,7 +8,7 @@
 namespace ariel {
     class Algorithms {
     public:
-        static bool negativeCycle(const Graph& graph);
+        static std::string negativeCycle(const Graph& graph);
         static std::string isBipartite(const Graph& graph);
         static std::string isContainsCycle(const Graph& graph);
         static std::string shortestPath(const Graph& graph, std::vector<int>::size_type start, std::vector<int>::size_type end);
