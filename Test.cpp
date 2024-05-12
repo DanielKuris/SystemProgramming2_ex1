@@ -2,6 +2,8 @@
 #include "Algorithms.hpp"
 #include <vector>
 #include <string>
+#include <stdexcept>
+#include "doctest.h" 
 
 using namespace std;
 
@@ -279,3 +281,5 @@ TEST_CASE("Test shortestPath to non-existing verticle")
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::shortestPath(g, 1, 3) == "Invalid start or end vertex");
 }
+
+
