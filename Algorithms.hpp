@@ -15,7 +15,7 @@ namespace ariel {
         static bool isConnected(const Graph& graph);
 
     private:
-        static bool isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, std::vector<bool>& visited, int parent, std::vector<int>& path);
+       static bool isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, std::vector<bool>& visited, int parent, std::vector<int>& path, std::vector<std::vector<int>>::size_type start);
     };
 }
 

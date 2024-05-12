@@ -41,39 +41,47 @@ namespace ariel {
     }
 
 
-
-    std::string Algorithms::isBipartite(const Graph& graph) {
+     std::string Algorithms::isBipartite(const Graph& graph) {
         auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
         std::vector<int> color(V, -1); // Initialize all vertices with no color
         std::queue<std::vector<std::vector<int>>::size_type> q;
         std::vector<std::vector<int>::size_type> partitionA, partitionB;
 
-        // Start BFS traversal from vertex 0
-        q.push(0);
-        color[0] = 1; // Assign the first vertex color 1
-        partitionA.push_back(0); // Add the first vertex to partition A
+        for (std::vector<std::vector<int>>::size_type i = 0; i < V; ++i) {
+            if (color[i] == -1) {
+                // Start BFS traversal from vertex i
+                q.push(i);
+                color[i] = 1; // Assign the first vertex color 1
+                partitionA.push_back(i); // Add the first vertex to partition A
 
-        while (!q.empty()) {
-            auto u = q.front();
-            q.pop();
+                while (!q.empty()) {
+                    auto u = q.front();
+                    q.pop();
 
-            // Traverse all adjacent vertices of u
-            for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
-                if (graph.isEdge(u, v)) {
-                    if (color[v] == -1) {
-                        color[v] = 1 - color[u]; // Assign opposite color to v
-                        q.push(v);
-                        // Add v to the corresponding partition
-                        if (color[v] == 1) {
-                            partitionA.push_back(v);
-                        } else {
-                            partitionB.push_back(v);
+                    // Traverse all adjacent vertices of u
+                    for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
+                        if (graph.isEdge(u, v)) {
+                            if (color[v] == -1) {
+                                color[v] = 1 - color[u]; // Assign opposite color to v
+                                q.push(v);
+                                // Add v to the corresponding partition
+                                if (color[v] == 1) {
+                                    partitionA.push_back(v);
+                                } else {
+                                    partitionB.push_back(v);
+                                }
+                            } else if (color[v] == color[u]) {
+                                return "The graph isn't bipartite."; // Graph is not bipartite
+                            }
                         }
-                    } else if (color[v] == color[u]) {
-                        return "The graph isn't bipartite."; // Graph is not bipartite
                     }
                 }
             }
+        }
+
+        // Check if any partition is empty
+        if (partitionA.empty() || partitionB.empty()) {
+            return "The graph isn't bipartite."; // Graph is not bipartite due to isolated vertices
         }
 
         // Construct and return the output string
@@ -96,13 +104,15 @@ namespace ariel {
     }
 
 
-     std::string Algorithms::isContainsCycle(const Graph& graph) {
+
+
+    std::string Algorithms::isContainsCycle(const Graph& graph) {
         auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
         vector<bool> visited(V, false);
         vector<int> path;
 
         for (std::vector<std::vector<int>>::size_type i = 0; i < V; i++) {
-            if (!visited[i] && isContainsCycleUtil(graph, i, visited, -1, path)) {
+            if (!visited[i] && isContainsCycleUtil(graph, i, visited, -1, path, i)) {
                 // Construct the cycle path
                 std::string cyclePath;
                 for (size_t j = 0; j < path.size(); ++j) {
@@ -115,10 +125,16 @@ namespace ariel {
             }
         }
 
+        // If no positive cycle is found, check for negative cycle
+        std::string negativeCycleResult = negativeCycle(graph);
+        if (negativeCycleResult != "No negative cycle found") {
+            return negativeCycleResult;
+        }
+
         return "No cycle found"; 
     }
 
-    bool Algorithms::isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, vector<bool>& visited, int parent, vector<int>& path) {
+    bool Algorithms::isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, vector<bool>& visited, int parent, vector<int>& path, std::vector<std::vector<int>>::size_type start) {
         visited[v] = true;
         path.push_back(v);
 
@@ -126,12 +142,11 @@ namespace ariel {
         for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
             if (graph.isEdge(v, u)) {
                 if (!visited[u]) {
-                    if (isContainsCycleUtil(graph, u, visited, v, path)) {
+                    if (isContainsCycleUtil(graph, u, visited, v, path, start)) {
                         return true;
                     }
-                } else if (u != parent) {
+                } else if (u != parent && u == start) {
                     // If u is visited and not parent of v, cycle detected
-                    path.push_back(u);
                     return true;
                 }
             }
@@ -144,7 +159,17 @@ namespace ariel {
 
 
 
+
     std::string Algorithms::shortestPath(const Graph& graph, std::vector<int>::size_type start, std::vector<int>::size_type end) {
+        if (start == end) {
+            return "Invalid request - path to itself";
+        }
+
+         // Check if the start and end vertices are within the valid range
+        if (start >= graph.getNumVertices() || end >= graph.getNumVertices()) {
+            return "Invalid start or end vertex";
+        }
+
         auto V = static_cast<std::vector<int>::size_type>(graph.getNumVertices()); // Use auto for V
 
         std::vector<std::vector<int>> adjMatrix = graph.getGraph();
@@ -199,6 +224,8 @@ namespace ariel {
             return ss.str();
         }
     }
+
+
 
 
 

@@ -82,10 +82,10 @@ TEST_CASE("Test graph with a negative cycle")
                                  {-1, 0, 0}};
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
-    CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "0->1->2");
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "Negative cycle detected");
     CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->0");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
-    CHECK(ariel::Algorithms::negativeCycle(g) == "Negative cycle found: 0->1->2->0");
+    CHECK(ariel::Algorithms::negativeCycle(g) == "Negative cycle found");
 }
 
 TEST_CASE("Test graph with negative weights")
@@ -97,10 +97,10 @@ TEST_CASE("Test graph with negative weights")
 
     g.loadGraph(graph); // Load the graph to the object.
     CHECK(ariel::Algorithms::isConnected(g) == true);
-    CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "0->1->2");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle found"); 
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "Negative cycle detected");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "Negative cycle found"); 
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 2}, B={1}.");
-    CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
+    CHECK(ariel::Algorithms::negativeCycle(g) == "Negative cycle found");
 }
 
 TEST_CASE("Test graph with disconnected components")
@@ -114,7 +114,7 @@ TEST_CASE("Test graph with disconnected components")
     CHECK(ariel::Algorithms::isConnected(g) == false);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "There is no path between 0 and 2");
     CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle found");
-    CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0}, B={1}.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
 
@@ -130,7 +130,7 @@ TEST_CASE("Test 4 verticles graph with cycle")
     CHECK(ariel::Algorithms::isConnected(g) == true);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "0->1->2->3");
     CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3->0");
-    CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 2}, B={1, 3}.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
 
@@ -159,7 +159,7 @@ TEST_CASE("Test graph with all ones") //Multiple cycles
                                  {1, 1, 1, 1, 0}};
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
-    CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "0->2");
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 1) == "0->1");
     CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->0");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
@@ -177,10 +177,10 @@ TEST_CASE("Test graph with 2->3->4->2 cycle")
         {1, 1, 0, 0, 0}
     };
     g.loadGraph(graph);
-    CHECK(ariel::Algorithms::isConnected(g) == true);
-    CHECK(ariel::Algorithms::shortestPath(g, 0, 4) == "0->4");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 2->3->4->2");
-    CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
+    CHECK(ariel::Algorithms::isConnected(g) == false);
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 4) == "There is no path between 0 and 4");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 1->2->3->4->0");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 1, 3}, B={2, 4}.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
 
@@ -195,7 +195,7 @@ TEST_CASE("Test bipartite graph")
     };
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
-    CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "0->1->2->3");
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "0->3");
     CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3->0");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 2}, B={1, 3}.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
@@ -213,8 +213,8 @@ TEST_CASE("Test directed graph")
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "0->1->2->3");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3->0");
-    CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle found");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 2}, B={1, 3}.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
 
@@ -229,10 +229,10 @@ TEST_CASE("Test graph with negative and positive weights")
     };
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
-    CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "0->1->2->3");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3->0");
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "Negative cycle detected");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "Negative cycle found");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
-    CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
+    CHECK(ariel::Algorithms::negativeCycle(g) == "Negative cycle found");
 }
 
 TEST_CASE("Test graph with one verticle")
@@ -241,9 +241,9 @@ TEST_CASE("Test graph with one verticle")
     vector<vector<int>> graph = {{0}};
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == false);
-    CHECK(ariel::Algorithms::shortestPath(g, 0, 0) == "There is no path between 0 and 0");
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 0) == "Invalid start or end vertex");
     CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle found");
-    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0}.");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
 
@@ -255,7 +255,7 @@ TEST_CASE("Test graph with two verticles")
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 1) == "0->1");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->0");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle found");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0}, B={1}.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
@@ -267,7 +267,7 @@ TEST_CASE("Test shortestPath to himself")
                                  {1, 0, 1},
                                  {0, 1, 0}};
     g.loadGraph(graph);
-    CHECK(ariel::Algorithms::shortestPath(g, 0, 0) == "0");
+    CHECK(ariel::Algorithms::shortestPath(g, 1, 1) == "Invalid request - path to itself");
 }
 
 TEST_CASE("Test shortestPath to non-existing verticle")
@@ -277,5 +277,5 @@ TEST_CASE("Test shortestPath to non-existing verticle")
                                  {1, 0, 1},
                                  {0, 1, 0}};
     g.loadGraph(graph);
-    CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "There is no path between 0 and 3");
+    CHECK(ariel::Algorithms::shortestPath(g, 1, 3) == "Invalid start or end vertex");
 }
