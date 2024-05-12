@@ -102,11 +102,18 @@ namespace ariel {
             if (!visited[i] && isContainsCycleUtil(graph, i, visited, parent)) {
                 // Construct the cycle path
                 std::string path;
-                int cycleStart = i;
-                int cycleEnd = parent[i];
+                std::vector<std::vector<int>>::size_type cycleStart = static_cast<std::vector<std::vector<int>>::size_type>(-1);
+                std::vector<std::vector<int>>::size_type cycleEnd = static_cast<std::vector<std::vector<int>>::size_type>(-1);
+                for (std::vector<std::vector<int>>::size_type v = 0; v < V; ++v) {
+                    if (visited[v]) {
+                        cycleEnd = v;
+                        cycleStart = static_cast<std::vector<std::vector<int>>::size_type>(parent[v]);
+                        break;
+                    }
+                }
                 while (cycleStart != cycleEnd) {
                     path = std::to_string(cycleEnd) + "->" + path;
-                    cycleEnd = static_cast<int>(parent[static_cast<size_t>(cycleEnd)]);
+                    cycleEnd = static_cast<std::vector<std::vector<int>>::size_type>(parent[cycleEnd]);
                 }
                 path = std::to_string(cycleStart) + "->" + path;
 
@@ -115,6 +122,27 @@ namespace ariel {
         }
 
         return "The graph doesn't contain a cycle";
+    }
+
+
+      bool Algorithms::isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, vector<bool>& visited, vector<int>& parent) {
+        visited[v] = true;
+
+        auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
+        for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
+            if (graph.getGraph()[v][u] != 0) {
+                if (!visited[u]) {
+                    parent[u] = v;
+                    if (isContainsCycleUtil(graph, u, visited, parent)) {
+                        return true;
+                    }
+                } else if (u != parent[v]) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 
@@ -201,23 +229,4 @@ namespace ariel {
         return true; // Graph is connected
     }
 
-    bool Algorithms::isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, vector<bool>& visited, vector<int>& parent) {
-        visited[v] = true;
-
-        auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
-        for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
-            if (graph.getGraph()[v][u] != 0) {
-                if (!visited[u]) {
-                    parent[u] = v;
-                    if (isContainsCycleUtil(graph, u, visited, parent)) {
-                        return true;
-                    }
-                } else if (u != parent[v]) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
 }
