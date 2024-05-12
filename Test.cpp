@@ -247,7 +247,7 @@ TEST_CASE("Test graph with one verticle")
     ariel::Graph g;
     vector<vector<int>> graph = {{0}};
     g.loadGraph(graph);
-    CHECK(ariel::Algorithms::isConnected(g) == false);
+    CHECK(ariel::Algorithms::isConnected(g) == true);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 0) == "Invalid start or end vertex");
     CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle found");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
