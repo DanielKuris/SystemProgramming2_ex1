@@ -139,7 +139,7 @@ namespace ariel {
         if (prev[current] != -1) {
             ss << "->";
         }
-        current = prev[current];
+        current = prev[current]; // Fix: Save the vertex number instead of the pair
     }
 
     return ss.str();
