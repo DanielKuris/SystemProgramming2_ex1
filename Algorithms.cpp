@@ -5,6 +5,8 @@
 #include <climits>
 #include <limits>
 #include <iostream>
+#include <algorithm> 
+#include <sstream>   
 
 using namespace std;
 
@@ -96,54 +98,48 @@ namespace ariel {
     std::string Algorithms::isContainsCycle(const Graph& graph) {
         auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
         vector<bool> visited(V, false);
-        vector<int> parent(V, -1);
+        vector<int> path;
 
         for (std::vector<std::vector<int>>::size_type i = 0; i < V; i++) {
-            if (!visited[i] && isContainsCycleUtil(graph, i, visited, parent)) {
+            if (!visited[i] && isContainsCycleUtil(graph, i, visited, -1, path)) {
                 // Construct the cycle path
-                std::string path;
-                std::vector<std::vector<int>>::size_type cycleStart = static_cast<std::vector<std::vector<int>>::size_type>(-1);
-                std::vector<std::vector<int>>::size_type cycleEnd = static_cast<std::vector<std::vector<int>>::size_type>(-1);
-                for (std::vector<std::vector<int>>::size_type v = 0; v < V; ++v) {
-                    if (visited[v]) {
-                        cycleEnd = v;
-                        cycleStart = static_cast<std::vector<std::vector<int>>::size_type>(parent[v]);
-                        break;
+                std::string cyclePath;
+                for (size_t j = 0; j < path.size(); ++j) {
+                    cyclePath += std::to_string(path[j]);
+                    if (j < path.size() - 1) {
+                        cyclePath += " -> ";
                     }
                 }
-                while (cycleStart != cycleEnd) {
-                    path = std::to_string(cycleEnd) + "->" + path;
-                    cycleEnd = static_cast<std::vector<std::vector<int>>::size_type>(parent[cycleEnd]);
-                }
-                path = std::to_string(cycleStart) + "->" + path;
-
-                return "The graph contains a cycle: " + path;
+                return "The graph contains a cycle: " + cyclePath;
             }
         }
 
-        return "The graph doesn't contain a cycle";
+        return "No cycle found"; 
     }
 
 
-      bool Algorithms::isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, vector<bool>& visited, vector<int>& parent) {
+    bool Algorithms::isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, vector<bool>& visited, int parent, vector<int>& path) {
         visited[v] = true;
+        path.push_back(v);
 
         auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
         for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
             if (graph.getGraph()[v][u] != 0) {
                 if (!visited[u]) {
-                    parent[u] = v;
-                    if (isContainsCycleUtil(graph, u, visited, parent)) {
+                    if (isContainsCycleUtil(graph, u, visited, v, path)) {
                         return true;
                     }
-                } else if (u != parent[v]) {
+                } else if (u != parent) {
+                    path.push_back(u);
                     return true;
                 }
             }
         }
 
+        path.pop_back();
         return false;
     }
+
 
 
     std::string Algorithms::shortestPath(const Graph& graph, std::vector<int>::size_type start, std::vector<int>::size_type end) {

@@ -3,10 +3,7 @@
 
 #include "Graph.hpp"
 #include <string>
-#include <queue>
 #include <vector>
-#include <sstream>
-#include <algorithm>
 
 namespace ariel {
     class Algorithms {
@@ -18,7 +15,7 @@ namespace ariel {
         static bool isConnected(const Graph& graph);
 
     private:
-        static bool isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, std::vector<bool>& visited, std::vector<int>& parent);
+        static bool isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, std::vector<bool>& visited, int parent, std::vector<int>& path);
     };
 }
 
