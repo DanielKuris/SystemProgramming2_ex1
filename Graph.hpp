@@ -1,3 +1,8 @@
+/*
+Email: danielkuris6@gmail.com
+ID: 214539397
+Name: Daniel Kuris
+*/
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 

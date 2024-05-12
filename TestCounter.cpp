@@ -1,3 +1,8 @@
+/*
+Email: danielkuris6@gmail.com
+ID: 214539397
+Name: Daniel Kuris
+*/
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
 using namespace doctest;

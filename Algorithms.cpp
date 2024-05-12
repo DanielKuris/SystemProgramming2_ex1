@@ -1,3 +1,8 @@
+/*
+Email: danielkuris6@gmail.com
+ID: 214539397
+Name: Daniel Kuris
+*/
 #include "Algorithms.hpp"
 #include <queue>
 #include <vector>

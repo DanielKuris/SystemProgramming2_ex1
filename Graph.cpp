@@ -1,3 +1,8 @@
+/*
+Email: danielkuris6@gmail.com
+ID: 214539397
+Name: Daniel Kuris
+*/
 #include "Graph.hpp" // Include the header file containing the class definition
 #include <iostream> // Include necessary standard library headers
 #include <vector>
