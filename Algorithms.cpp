@@ -4,100 +4,118 @@
 #include <unordered_set>
 #include <climits>
 #include <limits>
+#include <iostream>
 
 using namespace std;
 
 namespace ariel {
     bool Algorithms::negativeCycle(const Graph& graph) {
-    auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
-    std::vector<std::vector<int>> adjMatrix = graph.getGraph(); // Get the adjacency matrix
-    std::vector<int> dist(V, INT_MAX);
-    dist[0] = 0;
+        auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
+        std::vector<std::vector<int>> adjMatrix = graph.getGraph(); // Get the adjacency matrix
+        std::vector<int> dist(V, INT_MAX);
+        dist[0] = 0;
 
-    // Relax edges V - 1 times
-    for (std::vector<std::vector<int>>::size_type i = 0; i < V - 1; i++) {
+        // Relax edges V - 1 times
+        for (std::vector<std::vector<int>>::size_type i = 0; i < V - 1; i++) {
+            for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
+                for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
+                    if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
+                        dist[v] = dist[u] + adjMatrix[u][v];
+                    }
+                }
+            }
+        }
+
+        // Check for negative cycles
         for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
             for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
                 if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
-                    dist[v] = dist[u] + adjMatrix[u][v];
+                    return true; // Negative cycle found
                 }
             }
         }
-    }
 
-    // Check for negative cycles
-    for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
-        for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
-            if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
-                return true; // Negative cycle found
-            }
-        }
-    }
-
-    return false; // No negative cycle found
-    }
-
-    bool Algorithms::isBipartite(const Graph& graph) {
-    auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
-    std::vector<int> color(V, -1); // Initialize all vertices with no color
-    std::queue<std::vector<std::vector<int>>::size_type> q;
-
-    // Start BFS traversal from vertex 0
-    q.push(0);
-    color[0] = 1; // Assign the first vertex color 1
-
-    while (!q.empty()) {
-        auto u = q.front();
-        q.pop();
-
-        // Traverse all adjacent vertices of u
-        for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
-            if (graph.isEdge(u, v) && color[v] == -1) {
-                color[v] = 1 - color[u]; // Assign opposite color to v
-                q.push(v);
-            } else if (graph.isEdge(u, v) && color[v] == color[u]) {
-                return false; // Graph is not bipartite
-            }
-        }
-    }
-
-    return true; // Graph is bipartite
+        return false; // No negative cycle found
     }
 
 
-
-    bool Algorithms::isContainsCycle(const Graph& graph) {
-    auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
-    vector<bool> visited(V, false);
-
-    for (std::vector<std::vector<int>>::size_type i = 0; i < V; i++) {
-        if (!visited[i] && isContainsCycleUtil(graph, i, visited, -1)) {
-            return true; // Cycle found
-        }
-    }
-
-    return false; // No cycle found
-    }
-
-    bool Algorithms::isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, vector<bool>& visited, int parent) {
-        visited[v] = true;
-
+    std::string Algorithms::isBipartite(const Graph& graph) {
         auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
-        for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
-            if (graph.getGraph()[v][u] != 0) {
-                if (!visited[u]) {
-                    if (isContainsCycleUtil(graph, u, visited, v)) {
-                        return true;
+        std::vector<int> color(V, -1); // Initialize all vertices with no color
+        std::queue<std::vector<std::vector<int>>::size_type> q;
+        std::vector<std::vector<int>::size_type> partitionA, partitionB;
+
+        // Start BFS traversal from vertex 0
+        q.push(0);
+        color[0] = 1; // Assign the first vertex color 1
+        partitionA.push_back(0); // Add the first vertex to partition A
+
+        while (!q.empty()) {
+            auto u = q.front();
+            q.pop();
+
+            // Traverse all adjacent vertices of u
+            for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
+                if (graph.isEdge(u, v)) {
+                    if (color[v] == -1) {
+                        color[v] = 1 - color[u]; // Assign opposite color to v
+                        q.push(v);
+                        // Add v to the corresponding partition
+                        if (color[v] == 1) {
+                            partitionA.push_back(v);
+                        } else {
+                            partitionB.push_back(v);
+                        }
+                    } else if (color[v] == color[u]) {
+                        return "The graph isn't bipartite."; // Graph is not bipartite
                     }
-                } else if (u != parent) {
-                    return true;
                 }
             }
         }
 
-        return false;
+        // Construct and return the output string
+        std::string output = "The graph is bipartite: A={";
+        for (size_t i = 0; i < partitionA.size(); ++i) {
+            output += std::to_string(partitionA[i]);
+            if (i < partitionA.size() - 1) {
+                output += ", ";
+            }
+        }
+        output += "}, B={";
+        for (size_t i = 0; i < partitionB.size(); ++i) {
+            output += std::to_string(partitionB[i]);
+            if (i < partitionB.size() - 1) {
+                output += ", ";
+            }
+        }
+        output += "}.";
+        return output;
     }
 
+
+    std::string Algorithms::isContainsCycle(const Graph& graph) {
+        auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
+        vector<bool> visited(V, false);
+        vector<int> parent(V, -1);
+
+        for (std::vector<std::vector<int>>::size_type i = 0; i < V; i++) {
+            if (!visited[i] && isContainsCycleUtil(graph, i, visited, parent)) {
+                // Construct the cycle path
+                std::string path;
+                int cycleStart = i;
+                int cycleEnd = parent[i];
+                while (cycleStart != cycleEnd) {
+                    path = std::to_string(cycleEnd) + "->" + path;
+                    cycleEnd = static_cast<int>(parent[static_cast<size_t>(cycleEnd)]);
+                }
+                path = std::to_string(cycleStart) + "->" + path;
+
+                return "The graph contains a cycle: " + path;
+            }
+        }
+
+        return "The graph doesn't contain a cycle";
+    }
 
 
     std::string Algorithms::shortestPath(const Graph& graph, std::vector<int>::size_type start, std::vector<int>::size_type end) {
@@ -125,20 +143,30 @@ namespace ariel {
             }
         }
 
-        std::stringstream ss;
-        std::vector<int>::size_type current = end;
-        while (current != -1) {
-            ss << current;
-            if (prev[current] != -1) {
-                ss << "->";
+        // Reconstruct the shortest path if it exists
+        if (dist[end] == INT_MAX) {
+            return "There is no path between " + std::to_string(start) + " and " + std::to_string(end);
+        } else {
+            std::vector<std::vector<int>::size_type> pathVertices;
+            std::vector<int>::size_type current = end;
+            while (current != std::numeric_limits<std::vector<int>::size_type>::max()) {
+                pathVertices.push_back(current);
+                current = prev[current];
             }
-            current = prev[current];
+            std::reverse(pathVertices.begin(), pathVertices.end());
+
+            // Convert the vertices to a string with arrow separators
+            std::stringstream ss;
+            for (size_t i = 0; i < pathVertices.size(); ++i) {
+                ss << pathVertices[i];
+                if (i < pathVertices.size() - 1) {
+                    ss << "->";
+                }
+            }
+
+            return ss.str();
         }
-
-        return ss.str();
     }
-
-
 
 
     bool Algorithms::isConnected(const Graph& graph) {
@@ -172,6 +200,24 @@ namespace ariel {
 
         return true; // Graph is connected
     }
+
+    bool Algorithms::isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, vector<bool>& visited, vector<int>& parent) {
+        visited[v] = true;
+
+        auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
+        for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
+            if (graph.getGraph()[v][u] != 0) {
+                if (!visited[u]) {
+                    parent[u] = v;
+                    if (isContainsCycleUtil(graph, u, visited, parent)) {
+                        return true;
+                    }
+                } else if (u != parent[v]) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
-
-
