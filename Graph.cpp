@@ -1,4 +1,6 @@
 #include "Graph.hpp" // Include the header file containing the class definition
+#include <iostream> // Include necessary standard library headers
+#include <vector>
 
 namespace ariel {
     // Constructor
