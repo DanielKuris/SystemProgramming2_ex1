@@ -25,7 +25,7 @@ namespace ariel {
         for (std::vector<std::vector<int>>::size_type i = 0; i < V - 1; i++) {
             for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
                 for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
-                    if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
+                    if (adjMatrix[u][v] != 0 && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
                         dist[v] = dist[u] + adjMatrix[u][v];
                         parent[v] = u; // Update the parent of v
                     }
@@ -36,7 +36,7 @@ namespace ariel {
         // Check for negative cycles
         for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
             for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
-                if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
+                if (adjMatrix[u][v] != 0 && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
                     cycleStart = v; // Update the start of the negative cycle
                     break;
                 }
@@ -176,36 +176,42 @@ namespace ariel {
         auto V = static_cast<std::vector<int>::size_type>(graph.getNumVertices()); // Use auto for V
 
         std::vector<std::vector<int>> adjMatrix = graph.getGraph();
-        std::priority_queue<std::pair<int, std::vector<int>::size_type>, std::vector<std::pair<int, std::vector<int>::size_type>>, std::greater<std::pair<int, std::vector<int>::size_type>>> pq;
-        std::vector<int> dist(V, INT_MAX);
-        std::vector<std::vector<int>::size_type> prev(V, std::numeric_limits<std::vector<int>::size_type>::max());
+        std::vector<int> dist(V, std::numeric_limits<int>::max());
+        std::vector<int> prev(V, -1);
 
+        // Initialize distance from start to itself as 0
         dist[start] = 0;
 
-        pq.push(std::make_pair(0, start));
+        // Relax edges V-1 times
+        for (std::vector<int>::size_type i = 0; i < V - 1; ++i) {
+            for (std::vector<int>::size_type u = 0; u < V; ++u) {
+                for (std::vector<int>::size_type v = 0; v < V; ++v) {
+                    if (adjMatrix[u][v] != 0 && dist[u] != std::numeric_limits<int>::max() && dist[u] + adjMatrix[u][v] < dist[v]) {
+                        dist[v] = dist[u] + adjMatrix[u][v];
+                        prev[v] = u;
+                    }
+                }
+            }
+        }
 
-        while (!pq.empty()) {
-            std::vector<int>::size_type u = pq.top().second;
-            pq.pop();
-
-            for (std::vector<int>::size_type v = 0; v < V; ++v) { // Use auto for v and cast V to unsigned
-                if (adjMatrix[u][v] != 0 && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
-                    dist[v] = dist[u] + adjMatrix[u][v];
-                    prev[v] = u;
-                    pq.push(std::make_pair(dist[v], v));
+        // Check for negative cycles
+        for (std::vector<int>::size_type u = 0; u < V; ++u) {
+            for (std::vector<int>::size_type v = 0; v < V; ++v) {
+                if (adjMatrix[u][v] != 0 && dist[u] != std::numeric_limits<int>::max() && dist[u] + adjMatrix[u][v] < dist[v]) {
+                    return "Negative cycle detected";
                 }
             }
         }
 
         // Reconstruct the shortest path if it exists
-        if (dist[end] == INT_MAX) {
+        if (dist[end] == std::numeric_limits<int>::max()) {
             return "There is no path between " + std::to_string(start) + " and " + std::to_string(end);
         } else {
             std::vector<std::vector<int>::size_type> pathVertices;
             std::vector<int>::size_type current = end;
-            while (current != std::numeric_limits<std::vector<int>::size_type>::max()) {
+            while (current != static_cast<std::vector<int>::size_type>(-1)) {
                 pathVertices.push_back(current);
-                current = prev[current];
+                current = static_cast<std::vector<int>::size_type>(prev[current]);
             }
             std::reverse(pathVertices.begin(), pathVertices.end());
 
@@ -221,6 +227,8 @@ namespace ariel {
             return ss.str();
         }
     }
+
+
 
 
 
