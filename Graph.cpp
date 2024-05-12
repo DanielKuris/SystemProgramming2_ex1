@@ -52,7 +52,8 @@ namespace ariel {
         return numEdges; // Return the number of edges
     }
 
-    bool Graph::isEdge(int u, int v) const {
+    bool Graph::isEdge(std::vector<std::vector<int>>::size_type u, std::vector<std::vector<int>>::size_type v) const {
         return graph[u][v] != 0; // Check if there is an edge between u and v
     }
+
 }

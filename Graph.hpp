@@ -26,7 +26,7 @@ namespace ariel {
         int getNumEdges() const;
 
         // Method to check if there is an edge between vertices u and v
-        bool isEdge(int u, int v) const;
+        bool isEdge(std::vector<std::vector<int>>::size_type u, std::vector<std::vector<int>>::size_type v) const;
 
     private:
         // Private member variables
