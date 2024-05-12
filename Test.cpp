@@ -13,7 +13,7 @@ TEST_CASE("Test empty graph")
 }
 
 TEST_CASE("Test graph with non-zero diagonal")
-{
+{ 
     ariel::Graph g;
     vector<vector<int>> graph = {{1, 0, 0},
                                  {0, 1, 0},
@@ -182,4 +182,100 @@ TEST_CASE("Test graph with 2->3->4->2 cycle")
     CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 2->3->4->2");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
+}
+
+TEST_CASE("Test bipartite graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 0, 1},
+        {1, 0, 1, 0},
+        {0, 1, 0, 1},
+        {1, 0, 1, 0}
+    };
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::isConnected(g) == true);
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "0->1->2->3");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3->0");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 2}, B={1, 3}.");
+    CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
+}
+
+TEST_CASE("Test directed graph")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 0, 0},
+        {0, 0, 1, 0},
+        {0, 0, 0, 1},
+        {0, 0, 0, 0}
+    };
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::isConnected(g) == true);
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "0->1->2->3");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3->0");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
+    CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
+}
+
+TEST_CASE("Test graph with negative and positive weights")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {
+        {0, 1, 0, 0},
+        {-1, 0, 1, 0},
+        {0, 0, 0, -1},
+        {0, -1, 0, 0}
+    };
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::isConnected(g) == true);
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "0->1->2->3");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3->0");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
+    CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
+}
+
+TEST_CASE("Test graph with one verticle")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {{0}};
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::isConnected(g) == false);
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 0) == "There is no path between 0 and 0");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle found");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0}.");
+    CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
+}
+
+TEST_CASE("Test graph with two verticles")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {{0, 1},
+                                 {1, 0}};
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::isConnected(g) == true);
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 1) == "0->1");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->0");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0}, B={1}.");
+    CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
+}
+
+TEST_CASE("Test shortestPath to himself")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {{0, 1, 0},
+                                 {1, 0, 1},
+                                 {0, 1, 0}};
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 0) == "0");
+}
+
+TEST_CASE("Test shortestPath to non-existing verticle")
+{
+    ariel::Graph g;
+    vector<vector<int>> graph = {{0, 1, 0},
+                                 {1, 0, 1},
+                                 {0, 1, 0}};
+    g.loadGraph(graph);
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "There is no path between 0 and 3");
 }
