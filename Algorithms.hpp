@@ -1,7 +1,7 @@
 #ifndef ALGORITHMS_HPP
 #define ALGORITHMS_HPP
 
-#include "Graph.h"
+#include "Graph.hpp"
 #include <string>
 #include <queue>
 #include <vector>

@@ -1,4 +1,4 @@
-#include "Graph.h" // Include the header file containing the class definition
+#include "Graph.hpp" // Include the header file containing the class definition
 
 namespace ariel {
     // Constructor
