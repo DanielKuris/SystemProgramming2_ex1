@@ -10,6 +10,9 @@ namespace ariel {
     }
 
     // Destructor
+    Graph::~Graph() {
+        // Destructor implementation
+    }
     void Graph::loadGraph(const std::vector<std::vector<int>>& graph) {
         // Check if the graph is empty
         if (graph.empty()) {

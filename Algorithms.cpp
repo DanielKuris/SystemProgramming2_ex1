@@ -125,7 +125,7 @@ namespace ariel {
     }
 
 
-    std::string Algorithms::isContainsCycle(const Graph& graph) {
+     std::string Algorithms::isContainsCycle(const Graph& graph) {
         auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
         vector<bool> visited(V, false);
         vector<int> path;
@@ -147,7 +147,6 @@ namespace ariel {
         return "No cycle found"; 
     }
 
-
     bool Algorithms::isContainsCycleUtil(const Graph& graph, std::vector<std::vector<int>>::size_type v, vector<bool>& visited, int parent, vector<int>& path) {
         visited[v] = true;
         path.push_back(v);
@@ -159,7 +158,7 @@ namespace ariel {
                     if (isContainsCycleUtil(graph, u, visited, v, path)) {
                         return true;
                     }
-                } else if (u != parent) {
+                } else if (u != parent && std::find(path.begin(), path.end(), u) != path.end()) {
                     path.push_back(u);
                     return true;
                 }
@@ -169,6 +168,7 @@ namespace ariel {
         path.pop_back();
         return false;
     }
+
 
 
 

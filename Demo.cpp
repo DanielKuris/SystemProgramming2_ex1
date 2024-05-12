@@ -15,11 +15,13 @@ using namespace std;
 int main()
 {
     ariel::Graph g;
-    // 3x3 matrix that represents a connected graph.
     vector<vector<int>> graph = {
-        {0, 1, 0},
-        {1, 0, 1},
-        {0, 1, 0}};
+        {0, 0, 0, 0, 0},
+        {0, 0, 1, 0, 0},
+        {0, 0, 0, 1, 0},
+        {0, 0, 0, 0, 1},
+        {1, 1, 0, 0, 0}
+    };
     g.loadGraph(graph); // Load the graph to the object.
 
     g.printGraph();                                    // Should print: "Graph with 3 vertices and 4 edges."
