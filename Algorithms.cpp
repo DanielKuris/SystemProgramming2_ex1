@@ -11,22 +11,18 @@
 using namespace std;
 
 namespace ariel {
-    std::string Algorithms::negativeCycle(const Graph& graph) {
+     std::string Algorithms::negativeCycle(const Graph& graph) {
         auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
         std::vector<std::vector<int>> adjMatrix = graph.getGraph(); // Get the adjacency matrix
         std::vector<int> dist(V, INT_MAX);
-        std::vector<int> parent(V, -1); // Keep track of the parent of each vertex
-        std::vector<int>::size_type cycleStart = std::numeric_limits<std::vector<int>::size_type>::max(); // Initialize with maximum value
-
         dist[0] = 0;
 
         // Relax edges V - 1 times
         for (std::vector<std::vector<int>>::size_type i = 0; i < V - 1; i++) {
             for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
                 for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
-                    if (adjMatrix[u][v] != 0 && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
+                    if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
                         dist[v] = dist[u] + adjMatrix[u][v];
-                        parent[v] = u; // Update the parent of v
                     }
                 }
             }
@@ -35,20 +31,14 @@ namespace ariel {
         // Check for negative cycles
         for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
             for (std::vector<std::vector<int>>::size_type v = 0; v < V; v++) {
-                if (adjMatrix[u][v] != 0 && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
-                    cycleStart = v; // Update the start of the negative cycle
-                    break;
+                if (graph.isEdge(u, v) && dist[u] != INT_MAX && dist[u] + adjMatrix[u][v] < dist[v]) {
+                    return "Negative cycle found"; // Negative cycle found
                 }
             }
         }
 
-        if (cycleStart != std::numeric_limits<std::vector<int>::size_type>::max()) {
-            return "Negative cycle found";
-        } else {
-            return "No negative cycle found";
-        }
+        return "No negative cycle found"; // No negative cycle found
     }
-
 
 
 
@@ -134,22 +124,23 @@ namespace ariel {
 
         auto V = static_cast<std::vector<std::vector<int>>::size_type>(graph.getNumVertices());
         for (std::vector<std::vector<int>>::size_type u = 0; u < V; u++) {
-            if (graph.getGraph()[v][u] != 0) {
+            if (graph.isEdge(v, u)) {
                 if (!visited[u]) {
                     if (isContainsCycleUtil(graph, u, visited, v, path)) {
                         return true;
                     }
-                } else if (u != parent && std::find(path.begin(), path.end(), u) != path.end()) {
+                } else if (u != parent) {
+                    // If u is visited and not parent of v, cycle detected
                     path.push_back(u);
                     return true;
                 }
             }
         }
 
+        // If no cycle is found, remove v from path and return false
         path.pop_back();
         return false;
     }
-
 
 
 
