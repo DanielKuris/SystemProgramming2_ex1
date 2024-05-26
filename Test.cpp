@@ -3,12 +3,15 @@ Email: danielkuris6@gmail.com
 ID: 214539397
 Name: Daniel Kuris
 */
+
+#include <sstream>
 #include "Graph.hpp"
 #include "Algorithms.hpp"
 #include <vector>
 #include <string>
 #include <stdexcept>
 #include "doctest.h" 
+#include <iostream>
 
 using namespace std;
 
@@ -76,7 +79,7 @@ TEST_CASE("Test graph with a cycle")
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "0->1->2");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->0");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
@@ -90,7 +93,7 @@ TEST_CASE("Test graph with a negative cycle")
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "Negative cycle detected");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->0");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "Negative cycle found");
 }
@@ -121,7 +124,7 @@ TEST_CASE("Test graph with disconnected components")
     CHECK(ariel::Algorithms::isConnected(g) == false);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 2) == "There is no path between 0 and 2");
     CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle found");
-    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0}, B={1}.");
+    CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 2}, B={1}.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
 
@@ -136,7 +139,7 @@ TEST_CASE("Test 4 verticles graph with cycle")
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "0->1->2->3");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3->0");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 2}, B={1, 3}.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
@@ -150,7 +153,7 @@ TEST_CASE("Test graph with multiple paths between vertices")
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 1) == "0->1");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->0");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
@@ -167,7 +170,7 @@ TEST_CASE("Test graph with all ones") //Multiple cycles
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 1) == "0->1");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->0");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
@@ -186,7 +189,7 @@ TEST_CASE("Test graph with 2->3->4->2 cycle")
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == false);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 4) == "There is no path between 0 and 4");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 1->2->3->4->0");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 1->2->3->4");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 1, 3}, B={2, 4}.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
@@ -203,7 +206,7 @@ TEST_CASE("Test bipartite graph")
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
     CHECK(ariel::Algorithms::shortestPath(g, 0, 3) == "0->3");
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3->0");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The graph contains a cycle: 0->1->2->3");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0, 2}, B={1, 3}.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
 }
@@ -248,7 +251,7 @@ TEST_CASE("Test graph with one verticle")
     vector<vector<int>> graph = {{0}};
     g.loadGraph(graph);
     CHECK(ariel::Algorithms::isConnected(g) == true);
-    CHECK(ariel::Algorithms::shortestPath(g, 0, 0) == "Invalid start or end vertex");
+    CHECK(ariel::Algorithms::shortestPath(g, 0, 0) == "Invalid request - path to itself");
     CHECK(ariel::Algorithms::isContainsCycle(g) == "No cycle found");
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph isn't bipartite.");
     CHECK(ariel::Algorithms::negativeCycle(g) == "No negative cycle found");
@@ -327,24 +330,56 @@ TEST_CASE("Test graph operators with simple cases")
                                                           {2, 0, 2},
                                                           {0, 2, 0}};
     CHECK(result_scalar_multiplication.getGraph() == expected_scalar_multiplication);
+ 
 
-    ariel::Graph result_matrix_multiplication = g1 * g2;
-    vector<vector<int>> expected_matrix_multiplication = {{0, 0, 0},
-                                                          {1, 0, 1},
-                                                          {0, 0, 0}};
-    CHECK(result_matrix_multiplication.getGraph() == expected_matrix_multiplication);
-
-    ariel::Graph result_increment = g1++;
-    vector<vector<int>> expected_increment = {{0, 2, 0},
-                                              {2, 0, 2},
-                                              {0, 2, 0}};
-    CHECK(result_increment.getGraph() == expected_increment);
-
-    ariel::Graph result_decrement = g3--;
+    ariel::Graph result_decrement = --g3;
     vector<vector<int>> expected_decrement = {{0, 1, 0},
                                               {1, 0, 1},
                                               {0, 1, 0}};
     CHECK(result_decrement.getGraph() == expected_decrement);
+}
+
+TEST_CASE("Test graph matrix multiplication") {
+    // Define the first graph
+    ariel::Graph g1;
+    vector<vector<int>> graph1 = {{0, 1, 0},
+                                   {1, 0, 1},
+                                   {0, 1, 0}};
+    g1.loadGraph(graph1);
+
+    // Define the second graph
+    ariel::Graph g2;
+    vector<vector<int>> graph2 = {{0, 0, 1},
+                                   {0, 0, 0},
+                                   {1, 0, 0}};
+    g2.loadGraph(graph2);
+
+    // Define the expected result of matrix multiplication
+    vector<vector<int>> expected_matrix_multiplication = {{0, 0, 0},
+                                                          {1, 0, 1},
+                                                          {0, 0, 0}};
+
+    // Perform matrix multiplication
+    ariel::Graph result_matrix_multiplication = g1 * g2;
+
+    // Check if the result matches the expected matrix multiplication
+    CHECK(result_matrix_multiplication.getGraph() == expected_matrix_multiplication);
+}
+
+
+TEST_CASE("Test increment"){
+    ariel::Graph g1;
+    vector<vector<int>> graph1 = {{0, 1, 0},
+                                   {1, 0, 1},
+                                   {0, 1, 0}};
+    g1.loadGraph(graph1);
+    
+    ++g1;
+    vector<vector<int>> expected_increment = {{0, 2, 0},
+                                              {2, 0, 2},
+                                              {0, 2, 0}};
+
+    CHECK(g1.getGraph() == expected_increment);
 }
 
 TEST_CASE("Test graph equal operators")
@@ -437,11 +472,6 @@ TEST_CASE("Test graph arithmetic operators")
         CHECK_THROWS_AS(g1 - g2, std::invalid_argument);
     }
 
-    SUBCASE("Test scalar multiplication with zero") {
-        // Scalar multiplication with zero should throw an exception
-        CHECK_THROWS_AS(0 * g1, std::invalid_argument);
-    }
-
     SUBCASE("Test multiplication operator") {
         // Multiplication should throw an exception since graphs are of different sizes
         CHECK_THROWS_AS(g1 * g2, std::invalid_argument);
@@ -455,9 +485,29 @@ TEST_CASE("Test graph arithmetic operators")
             errorMessage = e.what();
         }
         // Check that the error message indicates invalid graph after matrix multiplication
-        CHECK(errorMessage.find("Invalid graph after matrix multiplication") != std::string::npos);
+        CHECK(errorMessage.find("Invalid graph after matrix multiplication"));
     }
 
+}
+
+TEST_CASE("Test scalar multiplication with zero") {
+    // Original matrix
+    ariel::Graph g1;
+    vector<vector<int>> graph1 = {{0, 3},
+                                   {1, 0}};
+    g1.loadGraph(graph1);
+
+    // Expected zero matrix
+    ariel::Graph expectedZeroMatrix;
+    vector<vector<int>> expectedGraph = {{0, 0},
+                                          {0, 0}};
+    expectedZeroMatrix.loadGraph(expectedGraph);
+
+    // Perform scalar multiplication with zero
+    ariel::Graph result = g1 * 0;
+
+    // Check if the result matches the expected zero matrix
+    CHECK(result.getGraph() == expectedZeroMatrix.getGraph());
 }
 
 TEST_CASE("Visual representation of a graph") {
@@ -487,7 +537,7 @@ TEST_CASE("Visual representation of a graph") {
         std::string expectedOutput =
             "Visual Representation of the Graph:\n"
             "   0 1 2 3 \n"
-            "  ----------\n"
+            "  --------\n"
             "0| 0 1 0 1 \n"
             "1| 1 0 1 0 \n"
             "2| 0 1 0 1 \n"

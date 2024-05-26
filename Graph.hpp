@@ -20,7 +20,7 @@ namespace ariel {
         bool validGraph() const;
 
         // Helper method to check if the current graph is fully contained within another graph
-        bool isContainedIn(const Graph& graph1, const Graph& graph2);
+        bool isContainedIn(const Graph& graph1, const Graph& graph2) const;
 
     public:
         // Constructor
