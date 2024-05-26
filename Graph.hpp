@@ -1,45 +1,97 @@
-/*
-Email: danielkuris6@gmail.com
-ID: 214539397
-Name: Daniel Kuris
-*/
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
 #include <vector>
+#include <stdexcept>
+#include <string>
 
 namespace ariel {
 
     class Graph {
+    private:
+        std::vector<std::vector<int>> graph; // Adjacency matrix representation of the graph
+        size_t numVertices; // Number of vertices in the graph
+        int numEdges; // Number of edges in the graph
+
+        // Helper method to calculate the number of edges in the graph
+        int calculateNumEdges(const std::vector<std::vector<int>>& graph) const;
+
+        // Member function to check if the current graph is valid
+        bool validGraph() const;
+
+        // Helper method to check if the current graph is fully contained within another graph
+        bool isContainedIn(const Graph& graph1, const Graph& graph2);
+
     public:
-        // Constructor and Destructor
+        // Constructor
         Graph();
+
+        // Destructor
         ~Graph();
 
-        // Method to load the graph from a vector of vectors
+        // Load graph from adjacency matrix
         void loadGraph(const std::vector<std::vector<int>>& graph);
 
-        // Method to print the graph information
+        // Print graph information
         void printGraph();
 
-        // Method to calculate the number of edges in the graph
-        int calculateNumEdges(const std::vector<std::vector<int>>& graph);
-
-        // Getter methods
+        // Getters
         std::vector<std::vector<int>> getGraph() const;
         int getNumVertices() const;
         int getNumEdges() const;
 
-        // Method to check if there is an edge between vertices u and v
+        // Check if there is an edge between two vertices
         bool isEdge(std::vector<std::vector<int>>::size_type u, std::vector<std::vector<int>>::size_type v) const;
 
-    private:
-        // Private member variables
-        std::vector<std::vector<int>> graph;
-        int numVertices;
-        int numEdges;
+        // Operator +
+        Graph operator+(const Graph& other) const;
+
+        // Operator -
+        Graph operator-(const Graph& other) const;
+
+        // Operator +=
+        Graph& operator+=(const Graph& other);
+
+        // Operator -=
+        Graph& operator-=(const Graph& other);
+
+        // Unary Operator -
+        Graph operator-() const;
+
+        // Operator ++
+        Graph& operator++();
+
+        // Operator --
+        Graph& operator--();
+
+        // Operator *
+        Graph& operator*(int scalar);
+
+        // Operator *
+        Graph operator*(const Graph& other) const;
+
+        // Operator <
+        bool operator<(const Graph& other) const;
+
+        // Operator >
+        bool operator>(const Graph& other) const;
+
+        // Operator ==
+        bool operator==(const Graph& other) const;
+
+        // Operator !=
+        bool operator!=(const Graph& other) const;
+        
+        // Operator <=
+        bool operator<=(const Graph& other) const;
+
+        // Operator >=
+        bool operator>=(const Graph& other) const;
+
+        // Visual representation of the graph
+        void visualGraph() const;
     };
 
-}
+} // namespace ariel
 
 #endif /* GRAPH_HPP */

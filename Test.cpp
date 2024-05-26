@@ -459,3 +459,39 @@ TEST_CASE("Test graph arithmetic operators")
     }
 
 }
+
+TEST_CASE("Visual representation of a graph") {
+    // Create a sample graph
+    ariel::Graph graph;
+    std::vector<std::vector<int>> adjacencyMatrix = {
+        {0, 1, 0, 1},
+        {1, 0, 1, 0},
+        {0, 1, 0, 1},
+        {1, 0, 1, 0}
+    };
+    graph.loadGraph(adjacencyMatrix);
+
+    // Check the visual representation
+    SUBCASE("Test visual representation") {
+        // Redirect cout to a stringstream
+        std::stringstream output;
+        std::streambuf* oldCout = std::cout.rdbuf(output.rdbuf());
+
+        // Print the visual representation
+        graph.visualGraph();
+
+        // Reset cout
+        std::cout.rdbuf(oldCout);
+
+        // Check the output
+        std::string expectedOutput =
+            "Visual Representation of the Graph:\n"
+            "   0 1 2 3 \n"
+            "  ----------\n"
+            "0| 0 1 0 1 \n"
+            "1| 1 0 1 0 \n"
+            "2| 0 1 0 1 \n"
+            "3| 1 0 1 0 \n";
+        CHECK(output.str() == expectedOutput);
+    }
+}
